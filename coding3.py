@@ -69,6 +69,29 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown("""
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+[data-testid="stToolbar"] {
+    display: none !important;
+}
+
+[data-testid="stDecoration"] {
+    display: none !important;
+}
+
+[data-testid="stStatusWidget"] {
+    display: none !important;
+}
+
+[data-testid="stHeader"] {
+    display: none !important;
+}
+</style>
+""", unsafe_allow_html=True)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 🎨 CSS STYLING (sama seperti script original)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
