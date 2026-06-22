@@ -631,79 +631,119 @@ elif st.session_state.current_page == "peta":
         if is_filtered:
             st.info("🔍 Filter aktif")
 
-fgdf = gdf.copy()
-with st.spinner("⏳ Memuat peta…"):
-    center, zoom = center_map(fgdf if not fgdf.empty else gdf)
+        with st.spinner("⏳ Memuat peta…"):
+            center, zoom = center_map(fgdf if not fgdf.empty else gdf)
 
-    m = leafmap.Map(
-        center=center,
-        zoom=zoom,
-        height=500
-    )
+            m = leafmap.Map(
+                center=center,
+                zoom=zoom,
+                height=500
+            )
 
-    m.add_basemap("OpenStreetMap")
+            m.add_basemap("OpenStreetMap")
 
-    if not gdf_kabupaten.empty:
-        m.add_gdf(
-            gdf_kabupaten,
-            layer_name="Batas Kabupaten",
-            style={
-                "color": "#2d6a4f",
-                "fillColor": "#2d6a4f",
-                "fillOpacity": 0.04,
-                "weight": 2.0,
-            },
-            info_mode="on_hover"
-        )
+            if not gdf_kabupaten.empty:
+                m.add_gdf(
+                    gdf_kabupaten,
+                    layer_name="Batas Kabupaten",
+                    style={
+                        "color": "#2d6a4f",
+                        "fillColor": "#2d6a4f",
+                        "fillOpacity": 0.04,
+                        "weight": 2.0,
+                    },
+                    info_mode="on_hover"
+                )
 
-    if not gdf_kecamatan.empty:
-        m.add_gdf(
-            gdf_kecamatan,
-            layer_name="Batas Kecamatan",
-            style={
-                "color": "#e07b39",
-                "fillColor": "#e07b39",
-                "fillOpacity": 0.06,
-                "weight": 2.5,
-            },
-            info_mode="on_hover"
-        )
+            if not gdf_kecamatan.empty:
+                m.add_gdf(
+                    gdf_kecamatan,
+                    layer_name="Batas Kecamatan",
+                    style={
+                        "color": "#e07b39",
+                        "fillColor": "#e07b39",
+                        "fillOpacity": 0.06,
+                        "weight": 2.5,
+                    },
+                    info_mode="on_hover"
+                )
 
-    if not is_filtered and not gdf_rtrw.empty:
-        m.add_gdf(
-            gdf_rtrw,
-            layer_name="RTRW",
-            style={
-                "color": "#ff6b6b",
-                "fillColor": "#ff6b6b",
-                "fillOpacity": 0.08,
-                "weight": 2.0,
-            },
-            info_mode="on_hover"
-        )
+            if not is_filtered and not gdf_rtrw.empty:
+                m.add_gdf(
+                    gdf_rtrw,
+                    layer_name="RTRW",
+                    style={
+                        "color": "#ff6b6b",
+                        "fillColor": "#ff6b6b",
+                        "fillOpacity": 0.08,
+                        "weight": 2.0,
+                    },
+                    info_mode="on_hover"
+                )
 
-    if not fgdf.empty:
-        m.add_gdf(
-            fgdf,
-            layer_name="Pemanfaatan Ruang",
-            style={
-                "color": "#1a3a52",
-                "fillColor": "#FFD700",
-                "fillOpacity": 0.35,
-                "weight": 1.5,
-            },
-            info_mode="on_click"
-        )
+            if not fgdf.empty:
+                m.add_gdf(
+                    fgdf,
+                    layer_name="Pemanfaatan Ruang",
+                    style={
+                        "color": "#1a3a52",
+                        "fillColor": "#FFD700",
+                        "fillOpacity": 0.35,
+                        "weight": 1.5,
+                    },
+                    info_mode="on_click"
+                )
 
-    m.to_streamlit(height=500)
+            # ── Legenda pojok kanan bawah ──────────────────────────────────
+            legend_items = [
+                ("Pemanfaatan Ruang", "#FFD700", "#1a3a52"),
+                ("Batas Kabupaten",   "#2d6a4f", "#2d6a4f"),
+                ("Batas Kecamatan",   "#e07b39", "#e07b39"),
+            ]
+            if not is_filtered and not gdf_rtrw.empty:
+                legend_items.append(("RTRW", "#ff6b6b", "#ff6b6b"))
 
-if not fgdf.empty:
-    st.subheader("📋 Data Detail")
-    st.dataframe(
-        fgdf[display_cols(fgdf)],
-        use_container_width=True,
-        height=300
-    )
+            legend_rows = "".join(
+                f'<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'
+                f'<span style="display:inline-block;width:14px;height:14px;border-radius:3px;'
+                f'background:{fill};border:2px solid {stroke};flex-shrink:0;"></span>'
+                f'<span style="font-size:11px;color:#1a3a52;">{label}</span></div>'
+                for label, fill, stroke in legend_items
+            )
+
+            legend_html = f"""
+            <div style="
+                position: fixed;
+                bottom: 36px;
+                right: 10px;
+                z-index: 9999;
+                background: rgba(255,255,255,0.92);
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 8px 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                font-family: Inter, sans-serif;
+                min-width: 150px;
+            ">
+                <div style="font-size:11px;font-weight:700;color:#1a3a52;
+                            text-transform:uppercase;letter-spacing:0.5px;
+                            margin-bottom:6px;border-bottom:1px solid #eee;padding-bottom:4px;">
+                    Legenda
+                </div>
+                {legend_rows}
+            </div>
+            """
+            m.get_root().html.add_child(folium.Element(legend_html))
+
+            m.to_streamlit(height=500)
+
+        if not fgdf.empty:
+            st.subheader("📋 Data Detail")
+            st.dataframe(
+                fgdf[display_cols(fgdf)],
+                use_container_width=True,
+                height=300
+            )
 
 # ════════════════════════════════════════════════════════════════════════════
 # 📍 PAGE: ADMIN
