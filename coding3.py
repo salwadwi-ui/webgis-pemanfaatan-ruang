@@ -637,22 +637,22 @@ elif st.session_state.current_page == "peta":
             m.add_basemap("OpenStreetMap")
             
             if not gdf_kabupaten.empty:
-                m.add_gdf(gdf_kabupaten, layer_name="📍 Batas Kabupaten",
+                m.add_gdf(gdf_kabupaten, layer_name="Batas Kabupaten",
                     style={"color":"#2d6a4f","fillColor":"#2d6a4f","fillOpacity":0.04,"weight":2.0},
                     info_mode="on_hover")
             
             if not gdf_kecamatan.empty:
-                m.add_gdf(gdf_kecamatan, layer_name="📍 Batas Kecamatan",
+                m.add_gdf(gdf_kecamatan, layer_name="Batas Kecamatan",
                     style={"color":"#e07b39","fillColor":"#e07b39","fillOpacity":0.06,"weight":2.5},
                     info_mode="on_hover")
             
             if not is_filtered and not gdf_rtrw.empty:
-                m.add_gdf(gdf_rtrw, layer_name="🏗️ RTRW",
+                m.add_gdf(gdf_rtrw, layer_name="RTRW",
                     style={"color":"#ff6b6b","fillColor":"#ff6b6b","fillOpacity":0.08,"weight":2.0},
                     info_mode="on_hover")
             
             if not fgdf.empty:
-                m.add_gdf(fgdf, layer_name="📍 Pemanfaatan Ruang",
+                m.add_gdf(fgdf, layer_name="Pemanfaatan Ruang",
                     style={"color":"#1a3a52","fillColor":"#FFD700","fillOpacity":0.35,"weight":1.5},
                     info_mode="on_click")
 
