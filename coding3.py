@@ -1,7 +1,8 @@
 """
-🗺️ WebGIS Pemanfaatan Ruang - IMPROVED VERSION (v3)
+🗺️ WebGIS Pemanfaatan Ruang - IMPROVED VERSION (v4)
 ✅ Sistem Data yang Sama Seperti Script 2 — Lebih Rapi & Efficient
 ✅ FOLDER ID SUDAH DIPERBAIKI
+✅ FIX: POPUP PROFILE CARD SUDAH DIHILANGKAN
 """
 
 import os
@@ -25,6 +26,10 @@ from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from google.oauth2 import service_account
 from PIL import Image
 
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🎨 REMOVE UNWANTED STREAMLIT ELEMENTS
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 st.markdown("""
 <style>
 [data-testid="stDecoration"] {
@@ -37,6 +42,40 @@ button[kind="header"] {
 
 iframe[title="streamlit_app"] {
     border: none;
+}
+
+/* REMOVE PROFILE POPUP CARDS */
+[data-testid="stStatusWidget"] {
+    display: none !important;
+}
+
+div[role="dialog"] {
+    display: none !important;
+}
+
+/* Hide profile/sharing cards */
+div[data-testid*="profile"],
+div[class*="ProfileCard"],
+div[class*="profile-card"],
+div[class*="user-card"],
+div[class*="share-card"] {
+    display: none !important;
+}
+
+/* Hide any popover or tooltip with user info */
+div[data-testid*="popover"],
+div[role="tooltip"] {
+    display: none !important;
+}
+
+/* Hide Streamlit branding in certain areas */
+a[href*="streamlit"] {
+    display: none !important;
+}
+
+/* Extra safeguard: hide any visible popup near top-right */
+div[style*="position: fixed"][style*="right"] {
+    display: none !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -108,6 +147,7 @@ header {visibility: hidden;}
 }
 </style>
 """, unsafe_allow_html=True)
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 🎨 CSS STYLING (sama seperti script original)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -252,6 +292,25 @@ function fixSelectboxColors() {
 
 document.addEventListener('DOMContentLoaded', fixSelectboxColors);
 setInterval(fixSelectboxColors, 500);
+
+// REMOVE PROFILE POPUP - JavaScript approach
+function removeProfilePopups() {
+    // Remove by data-testid
+    const statusWidget = document.querySelector('[data-testid="stStatusWidget"]');
+    if (statusWidget) statusWidget.style.display = 'none';
+    
+    // Remove dialogs
+    const dialogs = document.querySelectorAll('[role="dialog"]');
+    dialogs.forEach(d => d.style.display = 'none');
+    
+    // Remove profile cards
+    const profileCards = document.querySelectorAll('[class*="ProfileCard"], [class*="profile-card"], [class*="user-card"]');
+    profileCards.forEach(pc => pc.style.display = 'none');
+}
+
+// Run on load dan setiap 500ms
+document.addEventListener('DOMContentLoaded', removeProfilePopups);
+setInterval(removeProfilePopups, 500);
 </script>
 """, unsafe_allow_html=True)
 
