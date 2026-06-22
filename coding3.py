@@ -25,6 +25,22 @@ from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from google.oauth2 import service_account
 from PIL import Image
 
+st.markdown("""
+<style>
+[data-testid="stDecoration"] {
+    display: none;
+}
+
+button[kind="header"] {
+    display: none;
+}
+
+iframe[title="streamlit_app"] {
+    border: none;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # ⚙️ GOOGLE DRIVE SETUP
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
