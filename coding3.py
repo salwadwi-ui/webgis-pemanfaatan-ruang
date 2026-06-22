@@ -631,7 +631,7 @@ elif st.session_state.current_page == "peta":
         if is_filtered:
             st.info("🔍 Filter aktif")
 
-        with st.spinner("⏳ Memuat peta…"):
+with st.spinner("⏳ Memuat peta…"):
     center, zoom = center_map(fgdf if not fgdf.empty else gdf)
 
     m = leafmap.Map(
@@ -650,7 +650,7 @@ elif st.session_state.current_page == "peta":
                 "color": "#2d6a4f",
                 "fillColor": "#2d6a4f",
                 "fillOpacity": 0.04,
-                "weight": 2.0
+                "weight": 2.0,
             },
             info_mode="on_hover"
         )
@@ -663,7 +663,7 @@ elif st.session_state.current_page == "peta":
                 "color": "#e07b39",
                 "fillColor": "#e07b39",
                 "fillOpacity": 0.06,
-                "weight": 2.5
+                "weight": 2.5,
             },
             info_mode="on_hover"
         )
@@ -676,7 +676,7 @@ elif st.session_state.current_page == "peta":
                 "color": "#ff6b6b",
                 "fillColor": "#ff6b6b",
                 "fillOpacity": 0.08,
-                "weight": 2.0
+                "weight": 2.0,
             },
             info_mode="on_hover"
         )
@@ -689,33 +689,20 @@ elif st.session_state.current_page == "peta":
                 "color": "#1a3a52",
                 "fillColor": "#FFD700",
                 "fillOpacity": 0.35,
-                "weight": 1.5
+                "weight": 1.5,
             },
             info_mode="on_click"
         )
 
-    # LEGENDA
-    legend_dict = {
-        "Pemanfaatan Ruang": "#FFD700",
-        "RTRW": "#ff6b6b",
-        "Batas Kabupaten": "#2d6a4f",
-        "Batas Kecamatan": "#e07b39",
-    }
-
-    try:
-        m.add_legend(
-            title="Legenda Peta",
-            legend_dict=legend_dict,
-            position="bottomright"
-        )
-    except Exception:
-        pass
-
     m.to_streamlit(height=500)
-            
-        if not fgdf.empty:
-            st.subheader("📋 Data Detail")
-            st.dataframe(fgdf[display_cols(fgdf)], use_container_width=True, height=300)
+
+if not fgdf.empty:
+    st.subheader("📋 Data Detail")
+    st.dataframe(
+        fgdf[display_cols(fgdf)],
+        use_container_width=True,
+        height=300
+    )
 
 # ════════════════════════════════════════════════════════════════════════════
 # 📍 PAGE: ADMIN
