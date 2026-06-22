@@ -631,6 +631,7 @@ elif st.session_state.current_page == "peta":
         if is_filtered:
             st.info("🔍 Filter aktif")
 
+fgdf = gdf.copy()
 with st.spinner("⏳ Memuat peta…"):
     center, zoom = center_map(fgdf if not fgdf.empty else gdf)
 
