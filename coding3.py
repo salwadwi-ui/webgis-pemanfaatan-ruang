@@ -656,7 +656,74 @@ elif st.session_state.current_page == "peta":
                     info_mode="on_click")
 
             m.to_streamlit(height=500)
+legend_html = """
+<div style="
+position: fixed;
+bottom: 40px;
+right: 20px;
+z-index: 9999;
+background-color: white;
+padding: 12px;
+border-radius: 10px;
+box-shadow: 0 0 10px rgba(0,0,0,0.3);
+font-size: 14px;
+min-width: 180px;
+">
+<b>📌 Legenda Peta</b><br><br>
 
+<div style="margin-bottom:5px;">
+<span style="
+display:inline-block;
+width:18px;
+height:18px;
+background:#FFD700;
+border:1px solid #1a3a52;
+margin-right:8px;">
+</span>
+Pemanfaatan Ruang
+</div>
+
+<div style="margin-bottom:5px;">
+<span style="
+display:inline-block;
+width:18px;
+height:18px;
+background:#ff6b6b;
+border:1px solid #ff6b6b;
+margin-right:8px;">
+</span>
+RTRW
+</div>
+
+<div style="margin-bottom:5px;">
+<span style="
+display:inline-block;
+width:18px;
+height:18px;
+background:#2d6a4f;
+border:1px solid #2d6a4f;
+margin-right:8px;">
+</span>
+Batas Kabupaten
+</div>
+
+<div>
+<span style="
+display:inline-block;
+width:18px;
+height:18px;
+background:#e07b39;
+border:1px solid #e07b39;
+margin-right:8px;">
+</span>
+Batas Kecamatan
+</div>
+
+</div>
+"""
+m.get_root().html.add_child(
+    folium.Element(legend_html)
+)
         if not fgdf.empty:
             st.subheader("📋 Data Detail")
             st.dataframe(fgdf[display_cols(fgdf)], use_container_width=True, height=300)
