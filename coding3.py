@@ -632,47 +632,86 @@ elif st.session_state.current_page == "peta":
             st.info("🔍 Filter aktif")
 
         with st.spinner("⏳ Memuat peta…"):
-            center, zoom = center_map(fgdf if not fgdf.empty else gdf)
-            m = leafmap.Map(center=center, zoom=zoom, height=500)
-            m.add_basemap("OpenStreetMap")
-            
-            if not gdf_kabupaten.empty:
-                m.add_gdf(gdf_kabupaten, layer_name="Batas Kabupaten",
-                    style={"color":"#2d6a4f","fillColor":"#2d6a4f","fillOpacity":0.04,"weight":2.0},
-                    info_mode="on_hover")
-            
-            if not gdf_kecamatan.empty:
-                m.add_gdf(gdf_kecamatan, layer_name="Batas Kecamatan",
-                    style={"color":"#e07b39","fillColor":"#e07b39","fillOpacity":0.06,"weight":2.5},
-                    info_mode="on_hover")
-            
-            if not is_filtered and not gdf_rtrw.empty:
-                m.add_gdf(gdf_rtrw, layer_name="RTRW",
-                    style={"color":"#ff6b6b","fillColor":"#ff6b6b","fillOpacity":0.08,"weight":2.0},
-                    info_mode="on_hover")
-            
-            if not fgdf.empty:
-                m.add_gdf(fgdf, layer_name="Pemanfaatan Ruang",
-                    style={"color":"#1a3a52","fillColor":"#FFD700","fillOpacity":0.35,"weight":1.5},
-                    info_mode="on_click")
+    center, zoom = center_map(fgdf if not fgdf.empty else gdf)
 
-                    legend_dict = {
-                "Pemanfaatan Ruang": "#FFD700",
-                "RTRW": "#ff6b6b",
-                "Batas Kabupaten": "#2d6a4f",
-                "Batas Kecamatan": "#e07b39",
-            }
+    m = leafmap.Map(
+        center=center,
+        zoom=zoom,
+        height=500
+    )
 
-            try:
-                m.add_legend(
-                    title="Legenda Peta",
-                    legend_dict=legend_dict,
-                    position="bottomright"
-                )
-            except:
-                pass
+    m.add_basemap("OpenStreetMap")
 
-            m.to_streamlit(height=500)
+    if not gdf_kabupaten.empty:
+        m.add_gdf(
+            gdf_kabupaten,
+            layer_name="Batas Kabupaten",
+            style={
+                "color": "#2d6a4f",
+                "fillColor": "#2d6a4f",
+                "fillOpacity": 0.04,
+                "weight": 2.0
+            },
+            info_mode="on_hover"
+        )
+
+    if not gdf_kecamatan.empty:
+        m.add_gdf(
+            gdf_kecamatan,
+            layer_name="Batas Kecamatan",
+            style={
+                "color": "#e07b39",
+                "fillColor": "#e07b39",
+                "fillOpacity": 0.06,
+                "weight": 2.5
+            },
+            info_mode="on_hover"
+        )
+
+    if not is_filtered and not gdf_rtrw.empty:
+        m.add_gdf(
+            gdf_rtrw,
+            layer_name="RTRW",
+            style={
+                "color": "#ff6b6b",
+                "fillColor": "#ff6b6b",
+                "fillOpacity": 0.08,
+                "weight": 2.0
+            },
+            info_mode="on_hover"
+        )
+
+    if not fgdf.empty:
+        m.add_gdf(
+            fgdf,
+            layer_name="Pemanfaatan Ruang",
+            style={
+                "color": "#1a3a52",
+                "fillColor": "#FFD700",
+                "fillOpacity": 0.35,
+                "weight": 1.5
+            },
+            info_mode="on_click"
+        )
+
+    # LEGENDA
+    legend_dict = {
+        "Pemanfaatan Ruang": "#FFD700",
+        "RTRW": "#ff6b6b",
+        "Batas Kabupaten": "#2d6a4f",
+        "Batas Kecamatan": "#e07b39",
+    }
+
+    try:
+        m.add_legend(
+            title="Legenda Peta",
+            legend_dict=legend_dict,
+            position="bottomright"
+        )
+    except Exception:
+        pass
+
+    m.to_streamlit(height=500)
             
         if not fgdf.empty:
             st.subheader("📋 Data Detail")
