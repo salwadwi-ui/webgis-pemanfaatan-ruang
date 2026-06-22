@@ -656,20 +656,24 @@ elif st.session_state.current_page == "peta":
                     style={"color":"#1a3a52","fillColor":"#FFD700","fillOpacity":0.35,"weight":1.5},
                     info_mode="on_click")
 
+                    legend_dict = {
+                "Pemanfaatan Ruang": "#FFD700",
+                "RTRW": "#ff6b6b",
+                "Batas Kabupaten": "#2d6a4f",
+                "Batas Kecamatan": "#e07b39",
+            }
+
+            try:
+                m.add_legend(
+                    title="Legenda Peta",
+                    legend_dict=legend_dict,
+                    position="bottomright"
+                )
+            except:
+                pass
+
             m.to_streamlit(height=500)
-
-        legend_dict = {
-    "Pemanfaatan Ruang": "#FFD700",
-    "RTRW": "#ff6b6b",
-    "Batas Kabupaten": "#2d6a4f",
-    "Batas Kecamatan": "#e07b39",
-}
-
-m.add_legend(
-    title="Legenda Peta",
-    legend_dict=legend_dict,
-    position="bottomright"
-)
+            
         if not fgdf.empty:
             st.subheader("📋 Data Detail")
             st.dataframe(fgdf[display_cols(fgdf)], use_container_width=True, height=300)
