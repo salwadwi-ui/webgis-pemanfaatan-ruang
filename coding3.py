@@ -1,9 +1,3 @@
-"""
-🗺️ WebGIS Pemanfaatan Ruang - IMPROVED VERSION (v4)
-✅ Sistem Data yang Sama Seperti Script 2 — Lebih Rapi & Efficient
-✅ FOLDER ID SUDAH DIPERBAIKI
-✅ FIX: POPUP PROFILE CARD SUDAH DIHILANGKAN
-"""
 
 import os
 import io
@@ -26,9 +20,6 @@ from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from google.oauth2 import service_account
 from PIL import Image
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 🎨 REMOVE UNWANTED STREAMLIT ELEMENTS
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 st.markdown("""
 <style>
@@ -44,7 +35,6 @@ iframe[title="streamlit_app"] {
     border: none;
 }
 
-/* REMOVE PROFILE POPUP CARDS */
 [data-testid="stStatusWidget"] {
     display: none !important;
 }
@@ -53,7 +43,6 @@ div[role="dialog"] {
     display: none !important;
 }
 
-/* Hide profile/sharing cards */
 div[data-testid*="profile"],
 div[class*="ProfileCard"],
 div[class*="profile-card"],
@@ -62,39 +51,29 @@ div[class*="share-card"] {
     display: none !important;
 }
 
-/* Hide any popover or tooltip with user info */
 div[data-testid*="popover"],
 div[role="tooltip"] {
     display: none !important;
 }
 
-/* Hide Streamlit branding in certain areas */
 a[href*="streamlit"] {
     display: none !important;
 }
 
-/* Extra safeguard: hide any visible popup near top-right */
 div[style*="position: fixed"][style*="right"] {
     display: none !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ⚙️ GOOGLE DRIVE SETUP
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 SCOPES = ["https://www.googleapis.com/auth/drive"]
-FOLDER_ID = "1dTdLnvUyRgFDKCSLLKH83ZOb2fou0Mci"  # ✅ Folder ID yang sudah dikonfigurasi
+FOLDER_ID = "1dTdLnvUyRgFDKCSLLKH83ZOb2fou0Mci"  
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 📁 FILE PATHS — Using TEMP_DIR like Script 2
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 TEMP_DIR = pathlib.Path(tempfile.gettempdir()) / "webgis_cache"
 TEMP_DIR.mkdir(exist_ok=True)
 
-# ✅ FILE MAP — Organized like Script 2
 FILE_MAP = {
     "DATA PEMANFAATAN.geojson": TEMP_DIR / "DATA PEMANFAATAN.geojson",
     "Batas Administrasi Kabupaten Bandung.geojson": TEMP_DIR / "Batas Administrasi Kabupaten Bandung.geojson",
@@ -102,21 +81,17 @@ FILE_MAP = {
     "RTRW.geojson": TEMP_DIR / "RTRW.geojson",
 }
 
-# Quick access paths
 DATA_FILE = FILE_MAP["DATA PEMANFAATAN.geojson"]
 KABUPATEN_FILE = FILE_MAP["Batas Administrasi Kabupaten Bandung.geojson"]
 KECAMATAN_FILE = FILE_MAP["Batas Administrasi Kecamatan Katapang.geojson"]
 RTRW_FILE = FILE_MAP["RTRW.geojson"]
 
-# 🖼️ LOGO
+
 LOGO_PATH = r"logoupimerah.png"
 
-# 🔐 ADMIN PASSWORD
 ADMIN_PASSWORD = st.secrets.get("ADMIN_PASSWORD", "admin123")
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 📱 PAGE CONFIG
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 
 st.set_page_config(
     page_title="WebGIS Pemanfaatan Ruang",
@@ -148,9 +123,6 @@ header {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 🎨 CSS STYLING (sama seperti script original)
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 st.markdown("""
 <style>
@@ -314,18 +286,13 @@ setInterval(removeProfilePopups, 500);
 </script>
 """, unsafe_allow_html=True)
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 📦 SESSION STATE
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 if "admin_logged_in" not in st.session_state:
     st.session_state.admin_logged_in = False
 if "current_page" not in st.session_state:
     st.session_state.current_page = "landing"
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 🖼️ LOGO LOADING
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 
 @st.cache_data
 def load_logo_base64(logo_path):
@@ -341,9 +308,7 @@ def load_logo_base64(logo_path):
 
 logo_base64, logo_exists = load_logo_base64(LOGO_PATH)
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ☁️ GOOGLE DRIVE FUNCTIONS
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 
 @st.cache_resource
 def get_drive_service():
@@ -405,11 +370,8 @@ def upload_to_drive(service, local_path: pathlib.Path, filename: str):
         st.error(f"❌ Gagal upload ke Drive: {str(e)}")
         return False
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 📂 DATA LOADING FUNCTIONS — Simplified like Script 2
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-@st.cache_data(ttl=0)  # ✅ Changed: ttl=0 like Script 2 (no caching)
+@st.cache_data(ttl=0)  
 def load_data():
     """Load main data from file"""
     try:
@@ -436,7 +398,7 @@ def load_data():
         st.warning(f"Error loading data: {str(e)}")
         return gpd.GeoDataFrame()
 
-@st.cache_data(ttl=0)  # ✅ Changed: ttl=0 like Script 2
+@st.cache_data(ttl=0)  
 def load_boundary(filepath: str) -> gpd.GeoDataFrame:
     """Load boundary/reference data"""
     try:
@@ -563,14 +525,10 @@ def generate_namobj_colors(gdf_rtrw: gpd.GeoDataFrame) -> dict:
         colors[name] = f"#{r:02x}{g:02x}{b:02x}"
     return colors
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 🎯 INITIALIZE DATA — Download from Drive + Load
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 with st.spinner("⏳ Loading data dari Google Drive..."):
     drive_service = get_drive_service()
     
-    # ✅ Download files from Drive if they don't exist locally
     if drive_service:
         for drive_filename, local_path in FILE_MAP.items():
             if not local_path.exists():
@@ -583,9 +541,6 @@ with st.spinner("⏳ Loading data dari Google Drive..."):
     gdf_rtrw = load_boundary(str(RTRW_FILE))
 
 
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 🎨 HEADER & NAVIGATION
-# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 header_html = f"""
 <div class="header-gold-bar">
@@ -612,9 +567,7 @@ with col3:
 
 st.markdown("---")
 
-# ════════════════════════════════════════════════════════════════════════════
-# 📍 PAGE: LANDING
-# ════════════════════════════════════════════════════════════════════════════
+
 
 if st.session_state.current_page == "landing":
     st.markdown("""
@@ -666,9 +619,6 @@ if st.session_state.current_page == "landing":
         n = gdf["TAHUN"].nunique() if "TAHUN" in gdf.columns else 0
         st.markdown(f'<div class="stat-box"><div class="stat-number">{n}</div><div class="stat-label">📅 Tahun</div></div>', unsafe_allow_html=True)
 
-# ════════════════════════════════════════════════════════════════════════════
-# 📍 PAGE: PETA
-# ════════════════════════════════════════════════════════════════════════════
 
 elif st.session_state.current_page == "peta":
     st.markdown("""
@@ -843,9 +793,6 @@ elif st.session_state.current_page == "peta":
                 height=300
             )
 
-# ════════════════════════════════════════════════════════════════════════════
-# 📍 PAGE: ADMIN
-# ════════════════════════════════════════════════════════════════════════════
 
 elif st.session_state.current_page == "admin":
     st.markdown("""
@@ -945,9 +892,6 @@ elif st.session_state.current_page == "admin":
             - ⚙️ **Sinkronisasi:** Otomatis saat save
             """)
 
-# ════════════════════════════════════════════════════════════════════════════
-# 📍 PAGE: TENTANG
-# ════════════════════════════════════════════════════════════════════════════
 
 elif st.session_state.current_page == "beranda":
     st.markdown("""
@@ -972,9 +916,7 @@ elif st.session_state.current_page == "beranda":
     - 📊 **Data Export** - Download sebagai GeoJSON atau CSV
     """)
 
-# ════════════════════════════════════════════════════════════════════════════
-# 🔚 FOOTER
-# ════════════════════════════════════════════════════════════════════════════
+
 
 st.markdown("---")
 st.markdown("""
