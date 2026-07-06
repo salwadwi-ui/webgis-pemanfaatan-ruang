@@ -1030,7 +1030,7 @@ elif st.session_state.current_page == "beranda":
 st.markdown("---")
 st.markdown("""
 <div class="footer">
-    <p>© 2026 WebGIS Pemanfaatan Ruang — Platform Geospasial Terdepan</p>
-    <p style="font-size: 0.8rem;">Dengan Google Drive Integration ☁️ | Data di-load langsung dari Drive</p>
+    <p>© 2026 WebGIS Pemanfaatan Ruang - Platform Geospasial Terdepan</p>
+    <p style="font-size: 0.8rem;">Integrasi Dengan Google Drive ☁️</p>
 </div>
 """, unsafe_allow_html=True)
