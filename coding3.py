@@ -74,13 +74,13 @@ TEMP_DIR = pathlib.Path(tempfile.gettempdir()) / "webgis_cache"
 TEMP_DIR.mkdir(exist_ok=True)
 
 FILE_MAP = {
-    "DATA PEMANFAATAN.geojson": TEMP_DIR / "DATA PEMANFAATAN.geojson",
+    "pemanfaatan ruang TA.geojson": TEMP_DIR / "pemanfaatan ruang TA.geojson",
     "Batas Administrasi Kabupaten Bandung.geojson": TEMP_DIR / "Batas Administrasi Kabupaten Bandung.geojson",
     "Batas Administrasi Kecamatan Katapang.geojson": TEMP_DIR / "Batas Administrasi Kecamatan Katapang.geojson",
     "RTRW.geojson": TEMP_DIR / "RTRW.geojson",
 }
 
-DATA_FILE = FILE_MAP["DATA PEMANFAATAN.geojson"]
+DATA_FILE = FILE_MAP["pemanfaatan ruang TA.geojson"]
 BACKUP_FILE = TEMP_DIR / "DATA_BACKUP.geojson"
 KABUPATEN_FILE = FILE_MAP["Batas Administrasi Kabupaten Bandung.geojson"]
 KECAMATAN_FILE = FILE_MAP["Batas Administrasi Kecamatan Katapang.geojson"]
@@ -439,7 +439,7 @@ def save_data(gdf: gpd.GeoDataFrame, is_backup=False):
         drive_service = get_drive_service()
         if drive_service:
             with st.spinner("⏳ Uploading ke Google Drive..."):
-                if upload_to_drive(drive_service, DATA_FILE, "DATA PEMANFAATAN.geojson"):
+                if upload_to_drive(drive_service, DATA_FILE, "pemanfaatan ruang TA.geojson"):
                     if not is_backup:
                         st.success("✅ Data juga tersimpan ke Google Drive!")
         
@@ -989,7 +989,7 @@ elif st.session_state.current_page == "admin":
             with col1:
                 st.metric("📊 Total Data", len(gdf))
             with col2:
-                st.metric("📁 Data File", "DATA PEMANFAATAN.geojson")
+                st.metric("📁 Data File", "pemanfaatan ruang TA.geojson")
             
             st.markdown("---")
             st.markdown(f"""
