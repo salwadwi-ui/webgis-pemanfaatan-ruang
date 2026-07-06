@@ -969,6 +969,18 @@ elif st.session_state.current_page == "admin":
                         "text/csv",
                         use_container_width=True
                     )
+            
+            st.markdown("---")
+            st.subheader("🔄 Restore Data dari Backup")
+            st.markdown("Klik tombol di bawah untuk mengembalikan data ke state sebelumnya (jika ada backup).")
+            
+            if BACKUP_FILE.exists():
+                st.info("💾 Backup data tersedia - Anda bisa restore kapan saja")
+                if st.button("🔄 Restore dari Backup", use_container_width=True, type="primary"):
+                    if restore_backup():
+                        st.rerun()
+            else:
+                st.warning("⚠️ Belum ada backup - backup akan dibuat otomatis saat pertama kali delete")
         
         with tab3:
             st.subheader("ℹ️ Informasi Sistem")
