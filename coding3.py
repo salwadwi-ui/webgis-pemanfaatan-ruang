@@ -918,7 +918,7 @@ elif st.session_state.current_page == "admin":
         if drive_service:
             st.markdown('<div class="drive-status">☁️ Google Drive Sync: Aktif</div>', unsafe_allow_html=True)
 
-        tab1, tab2, tab3 = st.tabs(["📤 Upload Data", "📥 Export", "ℹ️ Info"])
+        tab1, tab2, tab3, tab4 = st.tabs(["📤 Upload Data", "📥 Export", "🗑️ Hapus Data", "ℹ️ Info"])
         
         with tab1:
             st.subheader("📤 Upload Data SHP/GeoJSON")
@@ -983,6 +983,84 @@ elif st.session_state.current_page == "admin":
                 st.warning("⚠️ Belum ada backup - backup akan dibuat otomatis saat pertama kali delete")
         
         with tab3:
+            st.subheader("🗑️ Hapus Data Per Polygon")
+            st.markdown("Pilih polygon yang ingin dihapus. Data akan dihapus satu persatu dengan konfirmasi.")
+            
+            if not gdf.empty:
+                # Buat backup otomatis jika belum ada
+                if not BACKUP_FILE.exists():
+                    st.info("💾 Membuat backup otomatis...")
+                    gdf.to_file(BACKUP_FILE, driver="GeoJSON")
+                
+                st.markdown("---")
+                st.markdown("#### 📍 Pilih Polygon untuk Dihapus")
+                
+                # Buat list pilihan polygon dengan informasi
+                polygon_options = []
+                for idx, row in gdf.iterrows():
+                    pemanfaatan = row.get('Pemanfaatan_Ruang', 'Unknown')
+                    tahun = row.get('Tahun', 'Unknown')
+                    zonasi = row.get('Zonasi_RTRW', 'Unknown')
+                    option_text = f"ID {idx} | {pemanfaatan} | Tahun {tahun} | Zonasi {zonasi}"
+                    polygon_options.append((idx, option_text))
+                
+                selected_idx = st.selectbox(
+                    "Pilih data polygon:",
+                    options=[opt[0] for opt in polygon_options],
+                    format_func=lambda x: [opt[1] for opt in polygon_options if opt[0] == x][0],
+                    key="polygon_select"
+                )
+                
+                if selected_idx is not None:
+                    st.markdown("---")
+                    st.markdown("#### 📋 Detail Data yang akan Dihapus")
+                    
+                    selected_row = gdf.loc[selected_idx]
+                    
+                    # Tampilkan detail polygon
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.metric("ID Polygon", selected_idx)
+                        st.metric("Pemanfaatan Ruang", selected_row.get('Pemanfaatan_Ruang', '-'))
+                        st.metric("Tahun", selected_row.get('Tahun', '-'))
+                    with col2:
+                        st.metric("Zonasi RTRW", selected_row.get('Zonasi_RTRW', '-'))
+                        st.metric("Keterangan", selected_row.get('Keterangan', '-')[:30] + '...' if len(str(selected_row.get('Keterangan', ''))) > 30 else selected_row.get('Keterangan', '-'))
+                    
+                    # Tampilkan tabel detail
+                    with st.expander("📊 Lihat Semua Atribut"):
+                        detail_df = pd.DataFrame([selected_row.drop('geometry')])
+                        st.dataframe(detail_df, use_container_width=True)
+                    
+                    st.markdown("---")
+                    st.markdown("#### ⚠️ Konfirmasi Penghapusan")
+                    st.warning(f"Anda akan menghapus 1 polygon dengan ID {selected_idx}. Tindakan ini tidak dapat dibatalkan kecuali melalui restore backup.")
+                    
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        if st.button("✅ Hapus Polygon", type="primary", use_container_width=True):
+                            with st.spinner("Menghapus data..."):
+                                # Hapus baris dengan index yang dipilih
+                                gdf_new = gdf.drop(selected_idx)
+                                
+                                # Simpan ke file
+                                try:
+                                    gdf_new.to_file(DATA_FILE, driver="GeoJSON")
+                                    st.success(f"✅ Polygon ID {selected_idx} berhasil dihapus!")
+                                    st.info(f"📊 Total data sekarang: {len(gdf_new)} polygon")
+                                    time.sleep(1)
+                                    st.rerun()
+                                except Exception as e:
+                                    st.error(f"❌ Error saat menyimpan: {str(e)}")
+                    
+                    with col2:
+                        if st.button("❌ Batal", use_container_width=True):
+                            st.info("✓ Penghapusan dibatalkan")
+                            st.rerun()
+            else:
+                st.warning("⚠️ Tidak ada data untuk dihapus")
+        
+        with tab4:
             st.subheader("ℹ️ Informasi Sistem")
             
             col1, col2 = st.columns(2)
