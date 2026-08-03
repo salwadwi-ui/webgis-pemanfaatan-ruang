@@ -20,6 +20,13 @@ from google.oauth2 import service_account
 from PIL import Image
 
 
+st.set_page_config(
+    page_title="WebGIS Pemanfaatan Ruang",
+    page_icon="🗺️",
+    layout="wide"
+)
+
+# CSS Styling - All in one block
 st.markdown("""
 <style>
 [data-testid="stDecoration"] {
@@ -62,46 +69,7 @@ a[href*="streamlit"] {
 div[style*="position: fixed"][style*="right"] {
     display: none !important;
 }
-</style>
-""", unsafe_allow_html=True)
 
-
-SCOPES = ["https://www.googleapis.com/auth/drive"]
-FOLDER_ID = "1dTdLnvUyRgFDKCSLLKH83ZOb2fou0Mci"  
-
-
-TEMP_DIR = pathlib.Path(tempfile.gettempdir()) / "webgis_cache"
-TEMP_DIR.mkdir(exist_ok=True)
-
-FILE_MAP = {
-    "pemanfaatan ruang TA.geojson": TEMP_DIR / "pemanfaatan ruang TA.geojson",
-    "Batas Administrasi Kabupaten Bandung.geojson": TEMP_DIR / "Batas Administrasi Kabupaten Bandung.geojson",
-    "Batas Administrasi Kecamatan Katapang.geojson": TEMP_DIR / "Batas Administrasi Kecamatan Katapang.geojson",
-    "RTRW.geojson": TEMP_DIR / "RTRW.geojson",
-}
-
-DATA_FILE = FILE_MAP["pemanfaatan ruang TA.geojson"]
-BACKUP_FILE = TEMP_DIR / "DATA_BACKUP.geojson"
-KABUPATEN_FILE = FILE_MAP["Batas Administrasi Kabupaten Bandung.geojson"]
-KECAMATAN_FILE = FILE_MAP["Batas Administrasi Kecamatan Katapang.geojson"]
-RTRW_FILE = FILE_MAP["RTRW.geojson"]
-
-
-LOGO_PATH = r"logoupimerah.png"
-HERO_PATH = r"herobanner.png"
-
-ADMIN_PASSWORD = st.secrets.get("ADMIN_PASSWORD", "admin123")
-
-
-
-st.set_page_config(
-    page_title="WebGIS Pemanfaatan Ruang",
-    page_icon="🗺️",
-    layout="wide"
-)
-
-st.markdown("""
-<style>
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
@@ -110,23 +78,10 @@ header {visibility: hidden;}
     display: none !important;
 }
 
-[data-testid="stDecoration"] {
-    display: none !important;
-}
-
-[data-testid="stStatusWidget"] {
-    display: none !important;
-}
-
 [data-testid="stHeader"] {
     display: none !important;
 }
-</style>
-""", unsafe_allow_html=True)
 
-
-st.markdown("""
-<style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
@@ -182,69 +137,38 @@ html, body {
     box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3) !important;
 }
 
-st.markdown(f"""
-<style>
-
-.hero-section{
-    width:100%;
-    height:430px;
-             
-    border-radius:20px;
-    overflow:hidden;
-
-    display:flex;
-    justify-content:flex-end;
-    align-items:center;
-
-    padding-right:80px;
-    margin-bottom:35px;
-
-    background-image:url("data:image/png;base64,{hero_base64}");
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
+.hero-section {
+    width: 100%;
+    height: 430px;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 80px;
+    margin-bottom: 35px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-.hero-content{
-    width:45%;
+.hero-content {
+    width: 45%;
 }
 
-.hero-title{{
-    font-family:'Playfair Display',serif;
-    font-size:3.3rem;
-    font-weight:800;
-    color:#1a3a52;
-    margin-bottom:18px;
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.3rem;
+    font-weight: 800;
+    color: #1a3a52;
+    margin-bottom: 18px;
 }
 
-.hero-subtitle{{
-    font-size:1.1rem;
-    color:#555;
-    line-height:1.8;
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.8;
 }
-
-@media(max-width:768px){{
-
-.hero-section{{
-    height:280px;
-    padding:30px;
-}}
-
-.hero-content{{
-    width:100%;
-}}
-
-.hero-title{{
-    font-size:2rem;
-}}
-
-}}
-
-</style>
-""", unsafe_allow_html=True)
-
-.hero-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 800; margin: 0; text-transform: uppercase; }
-.hero-subtitle { font-size: 1rem; opacity: 0.9; margin-top: 12px; color: #00BCD4; }
 
 .feature-box {
     background: white; border-radius: 12px; padding: 24px; text-align: center;
@@ -301,6 +225,13 @@ div[data-baseweb="select"] [role="option"] {
 }
 
 @media (max-width: 768px) {
+    .hero-section {
+        height: 280px;
+        padding: 30px;
+    }
+    .hero-content {
+        width: 100%;
+    }
     .hero-title { font-size: 1.8rem; }
     .header-gold-bar { flex-direction: column; gap: 12px; }
 }
@@ -322,35 +253,50 @@ function fixSelectboxColors() {
 document.addEventListener('DOMContentLoaded', fixSelectboxColors);
 setInterval(fixSelectboxColors, 500);
 
-// REMOVE PROFILE POPUP - JavaScript approach
 function removeProfilePopups() {
-    // Remove by data-testid
     const statusWidget = document.querySelector('[data-testid="stStatusWidget"]');
     if (statusWidget) statusWidget.style.display = 'none';
     
-    // Remove dialogs
     const dialogs = document.querySelectorAll('[role="dialog"]');
     dialogs.forEach(d => d.style.display = 'none');
     
-    // Remove profile cards
     const profileCards = document.querySelectorAll('[class*="ProfileCard"], [class*="profile-card"], [class*="user-card"]');
     profileCards.forEach(pc => pc.style.display = 'none');
 }
 
-// Run on load dan setiap 500ms
 document.addEventListener('DOMContentLoaded', removeProfilePopups);
 setInterval(removeProfilePopups, 500);
 </script>
 """, unsafe_allow_html=True)
 
 
-if "admin_logged_in" not in st.session_state:
-    st.session_state.admin_logged_in = False
-if "current_page" not in st.session_state:
-    st.session_state.current_page = "landing"
+# Constants
+SCOPES = ["https://www.googleapis.com/auth/drive"]
+FOLDER_ID = "1dTdLnvUyRgFDKCSLLKH83ZOb2fou0Mci"  
+
+TEMP_DIR = pathlib.Path(tempfile.gettempdir()) / "webgis_cache"
+TEMP_DIR.mkdir(exist_ok=True)
+
+FILE_MAP = {
+    "pemanfaatan ruang TA.geojson": TEMP_DIR / "pemanfaatan ruang TA.geojson",
+    "Batas Administrasi Kabupaten Bandung.geojson": TEMP_DIR / "Batas Administrasi Kabupaten Bandung.geojson",
+    "Batas Administrasi Kecamatan Katapang.geojson": TEMP_DIR / "Batas Administrasi Kecamatan Katapang.geojson",
+    "RTRW.geojson": TEMP_DIR / "RTRW.geojson",
+}
+
+DATA_FILE = FILE_MAP["pemanfaatan ruang TA.geojson"]
+BACKUP_FILE = TEMP_DIR / "DATA_BACKUP.geojson"
+KABUPATEN_FILE = FILE_MAP["Batas Administrasi Kabupaten Bandung.geojson"]
+KECAMATAN_FILE = FILE_MAP["Batas Administrasi Kecamatan Katapang.geojson"]
+RTRW_FILE = FILE_MAP["RTRW.geojson"]
+
+LOGO_PATH = r"logoupimerah.png"
+HERO_PATH = r"herobanner.png"
+
+ADMIN_PASSWORD = st.secrets.get("ADMIN_PASSWORD", "admin123")
 
 
-
+# Helper Functions
 @st.cache_data
 def load_logo_base64(logo_path):
     try:
@@ -363,7 +309,7 @@ def load_logo_base64(logo_path):
     except:
         return None, False
 
-logo_base64, logo_exists = load_logo_base64(LOGO_PATH)
+
 @st.cache_data
 def load_image_base64(image_path):
     try:
@@ -373,8 +319,6 @@ def load_image_base64(image_path):
         return None
     except:
         return None
-
-hero_base64 = load_image_base64(HERO_PATH)
 
 
 @st.cache_resource
@@ -387,6 +331,7 @@ def get_drive_service():
         return build("drive", "v3", credentials=creds)
     except Exception as e:
         return None
+
 
 def get_file_id(service, filename: str):
     """Cari file di folder Drive berdasarkan nama"""
@@ -401,6 +346,7 @@ def get_file_id(service, filename: str):
         return files[0]["id"] if files else None
     except:
         return None
+
 
 def download_from_drive(service, filename: str, dest_path: pathlib.Path) -> bool:
     """Download file dari Drive ke lokal"""
@@ -419,6 +365,7 @@ def download_from_drive(service, filename: str, dest_path: pathlib.Path) -> bool
         return True
     except Exception as e:
         return False
+
 
 def upload_to_drive(service, local_path: pathlib.Path, filename: str):
     """Upload atau update file ke Google Drive"""
@@ -465,6 +412,7 @@ def load_data():
         st.warning(f"Error loading data: {str(e)}")
         return gpd.GeoDataFrame()
 
+
 @st.cache_data(ttl=0)  
 def load_boundary(filepath: str) -> gpd.GeoDataFrame:
     """Load boundary/reference data"""
@@ -487,6 +435,7 @@ def load_boundary(filepath: str) -> gpd.GeoDataFrame:
     except Exception as e:
         st.warning(f"Error loading boundary: {str(e)}")
         return gpd.GeoDataFrame()
+
 
 def save_data(gdf: gpd.GeoDataFrame, is_backup=False):
     """Save data to local + upload to Google Drive"""
@@ -515,6 +464,7 @@ def save_data(gdf: gpd.GeoDataFrame, is_backup=False):
         
     except Exception as e:
         st.error(f"❌ Error: {str(e)}")
+
 
 def append_data(new_gdf: gpd.GeoDataFrame):
     """TAMBAH data baru ke data existing (BUKAN MENGGANTI)"""
@@ -563,37 +513,6 @@ def append_data(new_gdf: gpd.GeoDataFrame):
         st.error(f"❌ Error: {str(e)}")
         return False
 
-def delete_row(row_id: int):
-    """Hapus satu row berdasarkan OBJECTID"""
-    try:
-        gdf = load_data()
-        
-        if gdf.empty:
-            st.error("❌ Data kosong!")
-            return False
-        
-        # Find the row with given OBJECTID
-        if row_id not in gdf["OBJECTID"].values:
-            st.error(f"❌ Data dengan ID {row_id} tidak ditemukan!")
-            return False
-        
-        # Save backup
-        gdf.to_file(str(BACKUP_FILE), driver="GeoJSON")
-        
-        # Delete the row
-        gdf = gdf[gdf["OBJECTID"] != row_id].reset_index(drop=True)
-        
-        # Re-number OBJECTID
-        gdf["OBJECTID"] = range(1, len(gdf) + 1)
-        
-        # Save
-        save_data(gdf)
-        st.success(f"✅ Geometri ID {row_id} berhasil dihapus!")
-        return True
-        
-    except Exception as e:
-        st.error(f"❌ Error: {str(e)}")
-        return False
 
 def restore_backup():
     """Restore data dari backup"""
@@ -610,6 +529,7 @@ def restore_backup():
     except Exception as e:
         st.error(f"❌ Error: {str(e)}")
         return False
+
 
 def read_shp_from_zip(uploaded_file) -> gpd.GeoDataFrame:
     """Support SHP, KML, KMZ"""
@@ -657,6 +577,7 @@ def read_shp_from_zip(uploaded_file) -> gpd.GeoDataFrame:
         st.error(f"Error membaca file: {str(e)}")
         raise
 
+
 def center_map(gdf: gpd.GeoDataFrame):
     """Calculate map center"""
     try:
@@ -667,29 +588,20 @@ def center_map(gdf: gpd.GeoDataFrame):
     except:
         return [-6.99, 107.55], 13
 
+
 def display_cols(df):
     """Get columns to display (exclude geometry)"""
     return [c for c in df.columns if c != "geometry"]
 
-def generate_namobj_colors(gdf_rtrw: gpd.GeoDataFrame) -> dict:
-    """Generate warna unik per NAMOBJ"""
-    import hashlib
-    colors = {}
-    if "NAMOBJ" not in gdf_rtrw.columns:
-        return colors
-    unique_names = gdf_rtrw["NAMOBJ"].dropna().unique().tolist()
-    for name in unique_names:
-        h = hashlib.md5(str(name).encode()).hexdigest()
-        r = int(h[0:2], 16)
-        g = int(h[2:4], 16)
-        b = int(h[4:6], 16)
-        r = max(60, min(220, r))
-        g = max(60, min(220, g))
-        b = max(60, min(220, b))
-        colors[name] = f"#{r:02x}{g:02x}{b:02x}"
-    return colors
+
+# Initialize session state
+if "admin_logged_in" not in st.session_state:
+    st.session_state.admin_logged_in = False
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "landing"
 
 
+# Load data
 with st.spinner("⏳ Loading data dari Google Drive..."):
     drive_service = get_drive_service()
     
@@ -705,7 +617,11 @@ with st.spinner("⏳ Loading data dari Google Drive..."):
     gdf_rtrw = load_boundary(str(RTRW_FILE))
 
 
+# Load images
+logo_base64, logo_exists = load_logo_base64(LOGO_PATH)
+hero_base64 = load_image_base64(HERO_PATH)
 
+# Header
 header_html = f"""
 <div class="header-gold-bar">
     <div class="header-left">
@@ -732,29 +648,22 @@ with col3:
 st.markdown("---")
 
 
-
+# Pages
 if st.session_state.current_page == "landing":
-st.markdown("""
-<div class="hero-section">
-
-    <div class="hero-content">
-
-        <h1 class="hero-title">
-            WebGIS
-            Pemanfaatan Ruang
-        </h1>
-
-        <p class="hero-subtitle">
-            Sistem Informasi Geografis berbasis web
-            untuk visualisasi data pemanfaatan ruang
-            Kecamatan Katapang Kabupaten Bandung
-            Tahun 2023–2024.
-        </p>
-
+    hero_bg = f"background-image:url('data:image/png;base64,{hero_base64}');" if hero_base64 else ""
+    st.markdown(f"""
+    <div class="hero-section" style="{hero_bg}">
+        <div class="hero-content">
+            <h1 class="hero-title">WebGIS Pemanfaatan Ruang</h1>
+            <p class="hero-subtitle">
+                Sistem Informasi Geografis berbasis web
+                untuk visualisasi data pemanfaatan ruang
+                Kecamatan Katapang Kabupaten Bandung
+                Tahun 2023–2024.
+            </p>
+        </div>
     </div>
-
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -802,8 +711,10 @@ st.markdown("""
 elif st.session_state.current_page == "peta":
     st.markdown("""
     <div class="hero-section">
-        <h1 class="hero-title">Peta Publik Pemanfaatan Ruang</h1>
-        <p class="hero-subtitle">Visualisasi & Filter Data Geospasial</p>
+        <div class="hero-content">
+            <h1 class="hero-title">Peta Publik Pemanfaatan Ruang</h1>
+            <p class="hero-subtitle">Visualisasi & Filter Data Geospasial</p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -921,7 +832,7 @@ elif st.session_state.current_page == "peta":
                     info_mode="on_click"
                 )
 
-            # ── Legenda pojok kanan bawah ──────────────────────────────────
+            # Legend
             legend_items = [
                 ("Pemanfaatan Ruang", "#FFD700", "#1a3a52"),
                 ("Batas Kabupaten",   "#2d6a4f", "#2d6a4f"),
@@ -976,8 +887,10 @@ elif st.session_state.current_page == "peta":
 elif st.session_state.current_page == "admin":
     st.markdown("""
     <div class="hero-section">
-        <h1 class="hero-title">🔐 Admin Panel</h1>
-        <p class="hero-subtitle">Kelola & Upload Data Pemanfaatan Ruang</p>
+        <div class="hero-content">
+            <h1 class="hero-title">🔐 Admin Panel</h1>
+            <p class="hero-subtitle">Kelola & Upload Data Pemanfaatan Ruang</p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1069,7 +982,6 @@ elif st.session_state.current_page == "admin":
             st.markdown("Pilih polygon yang ingin dihapus. Data akan dihapus satu persatu dengan konfirmasi.")
             
             if not gdf.empty:
-                # Buat backup otomatis jika belum ada
                 if not BACKUP_FILE.exists():
                     st.info("💾 Membuat backup otomatis...")
                     gdf.to_file(BACKUP_FILE, driver="GeoJSON")
@@ -1077,19 +989,10 @@ elif st.session_state.current_page == "admin":
                 st.markdown("---")
                 st.markdown("#### 📍 Pilih Polygon untuk Dihapus")
                 
-                # Buat list pilihan polygon dengan informasi
-                polygon_options = []
-                for idx, row in gdf.iterrows():
-                    pemanfaatan = row.get('Pemanfaatan_Ruang', 'Unknown')
-                    tahun = row.get('Tahun', 'Unknown')
-                    zonasi = row.get('Zonasi_RTRW', 'Unknown')
-                    option_text = f"ID {idx} | {pemanfaatan} | Tahun {tahun} | Zonasi {zonasi}"
-                    polygon_options.append((idx, option_text))
-                
                 selected_idx = st.selectbox(
                     "Pilih data polygon:",
-                    options=[opt[0] for opt in polygon_options],
-                    format_func=lambda x: [opt[1] for opt in polygon_options if opt[0] == x][0],
+                    options=range(len(gdf)),
+                    format_func=lambda x: f"ID {x+1}",
                     key="polygon_select"
                 )
                 
@@ -1097,39 +1000,34 @@ elif st.session_state.current_page == "admin":
                     st.markdown("---")
                     st.markdown("#### 📋 Detail Data yang akan Dihapus")
                     
-                    selected_row = gdf.loc[selected_idx]
+                    selected_row = gdf.iloc[selected_idx]
                     
-                    # Tampilkan detail polygon
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.metric("ID Polygon", selected_idx)
-                        st.metric("Pemanfaatan Ruang", selected_row.get('Pemanfaatan_Ruang', '-'))
-                        st.metric("Tahun", selected_row.get('Tahun', '-'))
+                        st.metric("ID Polygon", selected_idx + 1)
                     with col2:
-                        st.metric("Zonasi RTRW", selected_row.get('Zonasi_RTRW', '-'))
-                        st.metric("Keterangan", selected_row.get('Keterangan', '-')[:30] + '...' if len(str(selected_row.get('Keterangan', ''))) > 30 else selected_row.get('Keterangan', '-'))
+                        st.metric("Total Atribut", len(selected_row))
                     
-                    # Tampilkan tabel detail
                     with st.expander("📊 Lihat Semua Atribut"):
                         detail_df = pd.DataFrame([selected_row.drop('geometry')])
                         st.dataframe(detail_df, use_container_width=True)
                     
                     st.markdown("---")
                     st.markdown("#### ⚠️ Konfirmasi Penghapusan")
-                    st.warning(f"Anda akan menghapus 1 polygon dengan ID {selected_idx}. Tindakan ini tidak dapat dibatalkan kecuali melalui restore backup.")
+                    st.warning(f"Anda akan menghapus 1 polygon dengan ID {selected_idx + 1}. Tindakan ini tidak dapat dibatalkan kecuali melalui restore backup.")
                     
                     col1, col2, col3 = st.columns(3)
                     with col1:
                         if st.button("✅ Hapus Polygon", type="primary", use_container_width=True):
                             with st.spinner("Menghapus data..."):
-                                # Hapus baris dengan index yang dipilih
-                                gdf_new = gdf.drop(selected_idx)
+                                gdf_new = gdf.drop(selected_idx).reset_index(drop=True)
+                                gdf_new["OBJECTID"] = range(1, len(gdf_new) + 1)
                                 
-                                # Simpan ke file
                                 try:
                                     gdf_new.to_file(DATA_FILE, driver="GeoJSON")
-                                    st.success(f"✅ Polygon ID {selected_idx} berhasil dihapus!")
+                                    st.success(f"✅ Polygon ID {selected_idx + 1} berhasil dihapus!")
                                     st.info(f"📊 Total data sekarang: {len(gdf_new)} polygon")
+                                    st.cache_data.clear()
                                     time.sleep(1)
                                     st.rerun()
                                 except Exception as e:
@@ -1138,7 +1036,6 @@ elif st.session_state.current_page == "admin":
                     with col2:
                         if st.button("❌ Batal", use_container_width=True):
                             st.info("✓ Penghapusan dibatalkan")
-                            st.rerun()
             else:
                 st.warning("⚠️ Tidak ada data untuk dihapus")
         
@@ -1165,8 +1062,10 @@ elif st.session_state.current_page == "admin":
 elif st.session_state.current_page == "beranda":
     st.markdown("""
     <div class="hero-section">
-        <h1 class="hero-title">Tentang Platform</h1>
-        <p class="hero-subtitle">Solusi Geospasial untuk Pemanfaatan Ruang</p>
+        <div class="hero-content">
+            <h1 class="hero-title">Tentang Platform</h1>
+            <p class="hero-subtitle">Solusi Geospasial untuk Pemanfaatan Ruang</p>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1184,7 +1083,6 @@ elif st.session_state.current_page == "beranda":
     - 🔐 **Admin Panel** - Password-protected untuk data management
     - 📊 **Data Export** - Download sebagai GeoJSON atau CSV
     """)
-
 
 
 st.markdown("---")
