@@ -185,10 +185,10 @@ html, body {
 st.markdown(f"""
 <style>
 
-.hero-section{{
+.hero-section{
     width:100%;
     height:430px;
-
+             
     border-radius:20px;
     overflow:hidden;
 
@@ -203,11 +203,11 @@ st.markdown(f"""
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
-}}
+}
 
-.hero-content{{
+.hero-content{
     width:45%;
-}}
+}
 
 .hero-title{{
     font-family:'Playfair Display',serif;
@@ -242,6 +242,7 @@ st.markdown(f"""
 
 </style>
 """, unsafe_allow_html=True)
+
 .hero-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 800; margin: 0; text-transform: uppercase; }
 .hero-subtitle { font-size: 1rem; opacity: 0.9; margin-top: 12px; color: #00BCD4; }
 
