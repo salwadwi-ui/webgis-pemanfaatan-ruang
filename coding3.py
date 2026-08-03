@@ -88,6 +88,7 @@ RTRW_FILE = FILE_MAP["RTRW.geojson"]
 
 
 LOGO_PATH = r"logoupimerah.png"
+HERO_PATH = r"herobanner.png"
 
 ADMIN_PASSWORD = st.secrets.get("ADMIN_PASSWORD", "admin123")
 
@@ -181,11 +182,66 @@ html, body {
     box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3) !important;
 }
 
-.hero-section {
-    background: linear-gradient(135deg, #1a3a52 0%, #2a5a72 100%);
-    color: white; padding: 60px 40px; text-align: center;
-    border-radius: 12px; margin-bottom: 30px;
+st.markdown(f"""
+<style>
+
+.hero-section{{
+    width:100%;
+    height:430px;
+
+    border-radius:20px;
+    overflow:hidden;
+
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+
+    padding-right:80px;
+    margin-bottom:35px;
+
+    background-image:url("data:image/png;base64,{hero_base64}");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+}}
+
+.hero-content{{
+    width:45%;
+}}
+
+.hero-title{{
+    font-family:'Playfair Display',serif;
+    font-size:3.3rem;
+    font-weight:800;
+    color:#1a3a52;
+    margin-bottom:18px;
 }
+
+.hero-subtitle{{
+    font-size:1.1rem;
+    color:#555;
+    line-height:1.8;
+}
+
+@media(max-width:768px){{
+
+.hero-section{{
+    height:280px;
+    padding:30px;
+}}
+
+.hero-content{{
+    width:100%;
+}}
+
+.hero-title{{
+    font-size:2rem;
+}}
+
+}}
+
+</style>
+""", unsafe_allow_html=True)
 .hero-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 800; margin: 0; text-transform: uppercase; }
 .hero-subtitle { font-size: 1rem; opacity: 0.9; margin-top: 12px; color: #00BCD4; }
 
@@ -307,7 +363,17 @@ def load_logo_base64(logo_path):
         return None, False
 
 logo_base64, logo_exists = load_logo_base64(LOGO_PATH)
+@st.cache_data
+def load_image_base64(image_path):
+    try:
+        if os.path.exists(image_path):
+            with open(image_path, "rb") as img:
+                return base64.b64encode(img.read()).decode()
+        return None
+    except:
+        return None
 
+hero_base64 = load_image_base64(HERO_PATH)
 
 
 @st.cache_resource
@@ -667,12 +733,27 @@ st.markdown("---")
 
 
 if st.session_state.current_page == "landing":
-    st.markdown("""
-    <div class="hero-section">
-        <h1 class="hero-title">🗺️ WebGIS Pemanfaatan Ruang</h1>
-        <p class="hero-subtitle">Platform Geospasial Terdepan untuk Manajemen Data</p>
+st.markdown("""
+<div class="hero-section">
+
+    <div class="hero-content">
+
+        <h1 class="hero-title">
+            WebGIS
+            Pemanfaatan Ruang
+        </h1>
+
+        <p class="hero-subtitle">
+            Sistem Informasi Geografis berbasis web
+            untuk visualisasi data pemanfaatan ruang
+            Kecamatan Katapang Kabupaten Bandung
+            Tahun 2023–2024.
+        </p>
+
     </div>
-    """, unsafe_allow_html=True)
+
+</div>
+""", unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
     with col1:
